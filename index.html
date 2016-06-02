@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>cobj by gprossliner</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>cobj</h1>
+        <h2>cobj allows to implement interface based polymorphism in plain c in a simple, efficient and typesafe way</h2>
+        <a href="https://github.com/gprossliner/cobj" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="cobj" class="anchor" href="#cobj" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cobj</h1>
+
+<p>cobj allows to implement interface based polymorphism in plain C. It's a pattern, and a generator, based on the preprocessor.</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<p>cobj enables developers to use a simple and comfortable way to implement polymorphism, based on interfaces and classes.</p>
+
+<h2>
+<a id="cobj-is-no-runtime" class="anchor" href="#cobj-is-no-runtime" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cobj is no runtime</h2>
+
+<p>This means that cobj don't care about allocation, managing lifetime, serialization or error-handling.
+It's just a way to call methods on an object. In opposite to other implementations, which often require that objects are on the heap, maybe including garbage collection or reference counting, in cobj you have total control over your objects.</p>
+
+<h2>
+<a id="cobj-uses-only-the-preprocessor" class="anchor" href="#cobj-uses-only-the-preprocessor" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cobj uses only the preprocessor</h2>
+
+<p>There is no external code-generator, build step or any other tool needed beside
+the C compiler. The cobj generator is heavily based on the x-macro technique, to
+generate the code needed.</p>
+
+<h2>
+<a id="cobj-wants-to-be-easy-safe-and-natural-to-use" class="anchor" href="#cobj-wants-to-be-easy-safe-and-natural-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cobj wants to be easy, safe and natural to use</h2>
+
+<p>Easy: Once you get the macros done (there will be templates provided), everything beside the
+implementation is created by the cobj generator (some .h files).</p>
+
+<p>Natural: It generates global functions for each interface, so you don't mess around
+with calling functions out of a struct of function pointers.</p>
+
+<p>Safe: Everything is strong typed, so you don't have to cast anywhere to use cobj.</p>
+
+<h1>
+<a id="entities" class="anchor" href="#entities" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Entities</h1>
+
+<p>cobj basically defines this kind of entities:</p>
+
+<h2>
+<a id="descriptors" class="anchor" href="#descriptors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Descriptors</h2>
+
+<p>A descriptor is a global variable, which describes an interface,
+or a class. Because they are const, they are normally compiled into program memory.
+So they use no ram.</p>
+
+<h2>
+<a id="interfaces" class="anchor" href="#interfaces" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Interfaces</h2>
+
+<p>An interface represents a named set of method prototypes, without implementation.</p>
+
+<h2>
+<a id="classes" class="anchor" href="#classes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classes</h2>
+
+<p>A class consists of the following parts:</p>
+
+<ul>
+<li>Implemented interfaces: A class is the entity implementing one ore more interfaces.</li>
+<li>Variables: A class may declare variables, which represent the private state of the object.</li>
+<li>Arguments for the initializer: To avoid that a "private interface" needs to be
+defined just for the initialization of an object, cobj classes can define a single
+initialization method.</li>
+</ul>
+
+<h2>
+<a id="objects" class="anchor" href="#objects" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Objects</h2>
+
+<p>An object is an instance of a class. It's basically a struct, consisting of a pointer to the class-descriptor, and every declared variable.</p>
+
+<h2>
+<a id="references" class="anchor" href="#references" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>References</h2>
+
+<p>Beside the initializer, no method can be directly called on an object. This is what
+references are for. A reference is initialized by calling a "queryinterface" method
+for a specific interface, providing a pointer to an object.</p>
+
+<p>Once you got a reference, you may call interface-methods, pass them around, and
+do whatever you like.</p>
+
+<h1>
+<a id="some-code" class="anchor" href="#some-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Some code</h1>
+
+<p>I'm sure you want to see some code, right? I'll show you how to declare interfaces
+and classes afterwards. This is how to use cobj once that is done:</p>
+
+<div class="highlight highlight-source-c"><pre>
+<span class="pl-c">// We have declared an interface named "gpio_pin", declaring a method:</span>
+<span class="pl-c">//  bool read_value()</span>
+<span class="pl-c">// We have class named "hw_gpio_pin" implementing this interface</span>
+<span class="pl-c">//  The "hw_gpio_pin" has an initializer "int pin_nr"</span>
+
+<span class="pl-k">void</span> <span class="pl-en">foo</span>()
+{
+    <span class="pl-c">// create a hw_gpio_pin on the stack:</span>
+    hw_gpio_pin pinObject;
+
+    <span class="pl-c">// call the initializer for pin #13</span>
+    <span class="pl-c1">hw_gpio_pin_initialize</span>(&amp;pinObject, <span class="pl-c1">13</span>);
+
+    <span class="pl-c">// to call the "get_value" function of the "gpio_pin" interface, we have to</span>
+    <span class="pl-c">// query for a reference:</span>
+
+    gpio_pin pinReference;
+    <span class="pl-c1">gpio_pin_queryreference</span>(pinObject.<span class="pl-smi">object</span>, &amp;pinReference);
+
+    <span class="pl-c1">bar</span>(pinReference);
+}
+
+<span class="pl-k">void</span> <span class="pl-en">bar</span>(gpio_pin pin)
+{
+    <span class="pl-c">// read the pin value:</span>
+    <span class="pl-k">bool</span> val = <span class="pl-c1">gpio_pin_get_value</span>(pin);
+}
+</pre></div>
+
+<h1>
+<a id="what-happens-at-runtime" class="anchor" href="#what-happens-at-runtime" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What happens at runtime?</h1>
+
+<p>I'll take the previous example to show you want's going on in cobj.</p>
+
+<h2>
+<a id="for-the-gpio_pin-interface" class="anchor" href="#for-the-gpio_pin-interface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>For the gpio_pin interface:</h2>
+
+<p>Once you have the "gpio_pin", you have the following code be generated in
+every file which does a #include "gpio_pin.h":</p>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-c">// this is the struct of function-pointers for the interface, _mt stands for</span>
+<span class="pl-c">// "methodtable"</span>
+<span class="pl-k">typedef</span> <span class="pl-k">struct</span> {
+   <span class="pl-c1">bool</span> (* get_value)(cobj_object * self)
+} gpio_pin_mt;
+
+<span class="pl-c">// this is the strong typed reference struct for any gpio-pin. Because References</span>
+<span class="pl-c">// are used very often, there is no _reference suffix. A reference is an instance</span>
+<span class="pl-c">// of an interface, so I find it better this way.</span>
+<span class="pl-k">typedef</span> <span class="pl-k">struct</span> {
+ gpio_pin_mt * mt;
+ cobj_object * object;
+} gpio_pin;
+
+<span class="pl-c">// this is the declaration to the global descriptor</span>
+<span class="pl-k">extern</span> <span class="pl-k">const</span> cobj_interface_descriptor * <span class="pl-k">const</span> gpio_pin_descriptor;
+
+<span class="pl-c">// this is the declaration to the queryinterface method</span>
+<span class="pl-k">bool</span> <span class="pl-en">gpio_pin_queryinterface</span>(cobj_object * object, gpio_pin * reference);
+
+<span class="pl-c">// now the declarations of the callable methods follow, we have just one:</span>
+<span class="pl-k">bool</span> <span class="pl-en">gpio_pin_get_value</span>(<span class="pl-k">const</span> gpio_pin * reference);
+</pre></div>
+
+<h2>
+<a id="for-the-hw_gpio_pin-class" class="anchor" href="#for-the-hw_gpio_pin-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>For the hw_gpio_pin class:</h2>
+
+<p>The following code is generated into files including hw_gpio_pin.h:</p>
+
+<div class="highlight highlight-source-c"><pre>
+<span class="pl-c">// This is the struct for the object's data. The class_desriptor is always the</span>
+<span class="pl-c">// first field in this structure. To allow inline allocation of an object,</span>
+<span class="pl-c">// the size of the object must be known to the compiler, this also includes</span>
+<span class="pl-c">// padding and alignment, so it's not wise to use char[sum of sizeof all variables].</span>
+<span class="pl-c">// Because of this, the variables are generated as they are into a struct,</span>
+<span class="pl-c">// but with symbolic names. So we know that this class as two integer fields</span>
+<span class="pl-c">// for it's variables. Why don't allow C unnamed struct members in such a case...</span>
+<span class="pl-k">typedef</span> <span class="pl-k">union</span> {
+ <span class="pl-k">struct</span> {
+  <span class="pl-k">const</span> cobj_class_descriptor * class_desriptor;
+  <span class="pl-k">struct</span> {
+        <span class="pl-k">int</span> private_0;
+        <span class="pl-k">int</span> private_1;
+  } class_data;
+ } private_data;
+ cobj_object object;
+} hw_gpio_pin;
+
+<span class="pl-c">// declare the descriptor for the class:</span>
+<span class="pl-k">extern</span> <span class="pl-k">const</span> cobj_class_descriptor * <span class="pl-k">const</span> hw_gpio_pin_descriptor;
+
+<span class="pl-c">// declare the initializer for the class:</span>
+<span class="pl-k">void</span> <span class="pl-en">hw_gpio_pin_initialize</span>(hw_gpio_pin * self, <span class="pl-k">int</span> pin_nr);
+</pre></div>
+
+<p>To see the whole picture, you need to know the implementation of initialize,
+queryinterface and the callable methods:</p>
+
+<p>The first thing: You see some declarations in gpio_pin.h. But wait: This is just
+a .h file, where is the implementation?</p>
+
+<p>In every project there is a single file named "interface_registry.c". Technically
+it don't have to be in a single file. You may split it up in several files. As long
+as every used interface is in exact one registry file, it's ok:</p>
+
+<div class="highlight highlight-source-c"><pre>
+<span class="pl-c">// a registry only enables registry mode, and then includes the .h files</span>
+<span class="pl-c">// of all interfaces</span>
+#<span class="pl-k">define</span> <span class="pl-en">COBJ_INTERFACE_REGISTRY_MODE</span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>gpio_pin.h<span class="pl-pds">"</span></span>
+#<span class="pl-k">undef</span>  COBJ_INTERFACE_REGISTRY_MODE
+
+<span class="pl-c">// this causes the following code to be generated:</span>
+<span class="pl-c">/////////////////////////////////////////////////////</span>
+
+<span class="pl-c">// queryinterface method</span>
+<span class="pl-k">bool</span> <span class="pl-en">gpio_pin_queryinterface</span>(cobj_object * object, gpio_pin * reference) {
+  cobj_mt mt = object-&gt;class_descriptor-&gt;<span class="pl-c1">queryinterface</span>(gpio_pin_descriptor);
+  <span class="pl-k">if</span>(!mt){
+   <span class="pl-k">return</span> <span class="pl-c1">false</span>;
+  }
+
+  reference-&gt;mt = (gpio_pin_mt*)mt;
+  reference-&gt;object = object;
+
+  <span class="pl-k">return</span> <span class="pl-c1">true</span>;
+ }
+
+<span class="pl-c">// callable methods (we have just one):</span>
+<span class="pl-k">bool</span> <span class="pl-en">gpio_pin_get_value</span>(<span class="pl-k">const</span> gpio_pin * reference )
+{
+    <span class="pl-k">return</span> reference-&gt;mt-&gt;<span class="pl-c1">get_value</span>(reference-&gt;object);
+}
+</pre></div>
+
+<p>The last thing we need to know for the basic understanding, is the hw_gpio_pin.c
+file:</p>
+
+<div class="highlight highlight-source-c"><pre>
+<span class="pl-c">// this code I have to write</span>
+#<span class="pl-k">define</span> <span class="pl-en">COBJ_IMPLEMENTATION_FILE</span>
+
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>hw_gpio_pin.h<span class="pl-pds">"</span></span>    <span class="pl-c">// technically all code below is generated here!</span>
+
+<span class="pl-c">// this is the initialize method. It's static as every other _impl method!</span>
+<span class="pl-k">static</span> <span class="pl-k">bool</span> <span class="pl-en">initialize_impl</span>(hw_gpio_pin_impl * self, <span class="pl-k">int</span> pin_nr)
+{
+    <span class="pl-c">// I can do what I want, just initialize some register addresses</span>
+    self-&gt;port_address = 0x7FFF1000 + (pin_nr &lt;&lt; <span class="pl-c1">5</span>) * 0x100;
+    self-&gt;port_mask = <span class="pl-c1">1</span> &lt;&lt; (pin_nr &amp; 0x20);
+    <span class="pl-k">return</span> <span class="pl-c1">true</span>;
+}
+
+<span class="pl-c">// this is our implementation of the get_value method:</span>
+<span class="pl-k">static</span> <span class="pl-k">bool</span> <span class="pl-en">gpio_pin_get_value_impl</span>(hw_gpio_pin_impl * self)
+{
+    <span class="pl-c">// access some gpio register here to read the value</span>
+    <span class="pl-k">volatile</span> <span class="pl-k">int</span> * pvr = self-&gt;port_address + 0x10;
+    <span class="pl-k">return</span> (* pvr &amp;&amp; self-&gt;port_mask) != <span class="pl-c1">0</span>;
+}
+
+<span class="pl-c">// this code is being generated:</span>
+<span class="pl-c">/////////////////////////////////////////////////////</span>
+
+<span class="pl-c">// our _impl object structure, with the real names of the variables:</span>
+<span class="pl-k">typedef</span> <span class="pl-k">struct</span> {
+  cobj_class_descriptor * class_desriptor;
+  <span class="pl-k">int</span> portNr;
+    <span class="pl-k">int</span> portMask;
+ } hw_gpio_pin_impl;
+
+<span class="pl-c">// forward declarations to the _impl functions:</span>
+<span class="pl-k">static</span> <span class="pl-k">bool</span> <span class="pl-en">gpio_pin_get_value_impl</span>(hw_gpio_pin_impl* self);
+
+<span class="pl-c">// forward declarations to the _thunk functions:</span>
+<span class="pl-k">static</span> <span class="pl-k">bool</span> <span class="pl-en">gpio_pin_get_value_thunk</span>(cobj_object* self )
+
+<span class="pl-c">// implementations of the _thunk functions (they basically perform the cast)</span>
+static bool gpio_pin_get_value_thunk(cobj_object * self ) {
+    <span class="pl-k">return</span> <span class="pl-c1">gpio_pin_get_value_impl</span>((hw_gpio_pin_impl*)self );
+}
+
+<span class="pl-c">// a _mt struct for each implemented interface:</span>
+<span class="pl-k">static</span> <span class="pl-k">const</span> gpio_pin_mt hw_gpio_pin_gpio_pin_mt =
+  .get_value = &amp;gpio_pin_get_value_thunk,
+ };
+
+<span class="pl-c">// forward declaration to the initialize_impl function:</span>
+<span class="pl-k">static</span> <span class="pl-k">bool</span> <span class="pl-en">initialize_impl</span>(hw_gpio_pin_impl * self, <span class="pl-k">int</span> portNr);
+
+<span class="pl-c">// implementation of the initialize function:</span>
+<span class="pl-k">bool</span> <span class="pl-en">hw_gpio_pin_initialize</span>(hw_gpio_pin * self, <span class="pl-k">int</span> portNr)
+{
+  self-&gt;private_data.<span class="pl-smi">class_desriptor</span> = hw_gpio_pin_descriptor;
+  <span class="pl-k">return</span> <span class="pl-c1">initialize_impl</span>((hw_gpio_pin_impl*)self, portNr);
+}
+
+<span class="pl-c">// forward declaration of queryinterface:</span>
+<span class="pl-k">static</span> cobj_mt <span class="pl-en">queryinterface</span>(<span class="pl-k">const</span> cobj_interface_descriptor * interface);
+
+<span class="pl-c">// implementation of queryinterface:</span>
+<span class="pl-k">static</span> cobj_mt <span class="pl-en">queryinterface</span>(<span class="pl-k">const</span> cobj_interface_descriptor * interface){
+    <span class="pl-k">if</span>(interface == gpio_pin_descriptor) <span class="pl-k">return</span> (cobj_mt)(&amp;hw_gpio_pin_gpio_pin_mt);
+  <span class="pl-k">return</span> (cobj_mt*)<span class="pl-c1">0</span>;
+ }
+
+<span class="pl-c">// and finally, the descriptor:</span>
+<span class="pl-k">static</span> <span class="pl-k">const</span> cobj_class_descriptor hw_gpio_pin_descriptor_instance = {
+  .<span class="pl-smi">class_name</span> = <span class="pl-s"><span class="pl-pds">"</span>hw_gpio_pin<span class="pl-pds">"</span></span>,
+  .<span class="pl-smi">queryinterface</span> = &amp;queryinterface
+ };
+
+ <span class="pl-k">const</span> cobj_class_descriptor * <span class="pl-k">const</span> hw_gpio_pin_descriptor = &amp;hw_gpio_pin_descriptor_instance;
+</pre></div>
+
+<p>In the next chapter I'll show you how to declare this things!</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/gprossliner/cobj/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/gprossliner/cobj/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/gprossliner/cobj"></a> is maintained by <a href="https://github.com/gprossliner">gprossliner</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
