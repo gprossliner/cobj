@@ -150,7 +150,6 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 	// (4) generate the class-descriptor
 	static const cobj_class_descriptor genclass_descriptor_instance = {
 		.class_name = COBJPVT_PP_STRINGIFY(COBJ_CLASS_NAME),
-		.object_size = sizeof(genclass_object),
 		.queryinterface = &queryinterface
 	};
 	

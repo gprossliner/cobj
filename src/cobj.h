@@ -49,7 +49,6 @@ typedef struct {
 typedef struct {
 	cobj_descriptor_string class_name;
 	cobj_mt (*queryinterface)(const cobj_interface_descriptor * interface);
-	size_t object_size;
 } cobj_class_descriptor;
 
 //////////////////////////////////////////////////////////////////////////
