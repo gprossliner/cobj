@@ -48,8 +48,19 @@ typedef struct {
 	
 	#define COBJPVT_GEN_METHOD_TEMPLATE(GEN_RETURN_STATEMENT, GEN_RETURN_TYPE, GEN_METHODNAME,  GEN_ARGS_SEPERATOR, GEN_ARGS_SIGNATURE, GEN_ARGS_NAME)	\
 		GEN_RETURN_TYPE (*GEN_METHODNAME)(cobj_object * self GEN_ARGS_SEPERATOR GEN_ARGS_SIGNATURE);
-			
-		COBJPVT_GEN_METHOD_GENERATOR()
+			COBJPVT_GEN_METHOD_GENERATOR()
+		
+			/*
+				Common Error:
+				expected ';', ',' or ')' before 'COBJPVT_GEN_METHOD_ARGS_SEPERATOR_1' or any odd number:
+
+				The syntax of the COBY_INTERFACE_METHOD is invalid, because the parameter list must always contain pairs values.
+				You may be missing the comma between the type and the name.
+
+				Wrong: COBJ_INTERFACE_METHOD(void, foo, int i)
+				Right: COBJ_INTERFACE_METHOD(void, foo, int, i)
+			*/
+
 	#undef COBJPVT_GEN_METHOD_TEMPLATE	
 	
 } geninterface_mt;
@@ -122,6 +133,27 @@ bool geninterface_queryinterface(cobj_object * object, geninterface_reference * 
 		}
 			
 		COBJ_INTERFACE_METHODS
+
+		/*
+			Common Error:
+			src.o: In function `interface_method_thunk':
+			undefined reference to `interface_method_impl'
+
+			Cause:
+			You are missing the implementation of the method of an interface in a class. The .o file specifies which class.
+
+			Solution:
+			Implement the method with the following signature:
+
+			static RETURN_TYPE interface_method_impl(CLASS_NAME_impl * self [argument-list])
+			{
+				...
+			}
+		*/
+
+
+
+
 	#undef COBJPVT_GEN_METHOD_TEMPLATE
 	
 	//////////////////////////////////////////////////////////////////////////

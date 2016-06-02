@@ -44,16 +44,7 @@ SOFTWARE.
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-// (1) parameters_struct
-typedef struct {
-	#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
-		GEN_PARAM_TYPE GEN_PARAM_NAME;
-	COBJPVT_GEN_CLASS_PARAMETER_GENERATOR()
-	#undef COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE
-} genclass_parameters;
-
-//////////////////////////////////////////////////////////////////////////
-// (2) strong typed implemenation object_struct
+// (1) strong typed implemenation object_struct
 #ifndef COBJ_IMPLEMENTATION_FILE
 	// if we are in an implementation-file, this struct has already been rendered
 	// on the first interface-implementation, because the thunks need the type
@@ -68,7 +59,7 @@ typedef struct {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-// (3) public object struct
+// (2) public object struct
 typedef union {
 	struct {
 		const cobj_class_descriptor * class_desriptor;
@@ -86,11 +77,11 @@ typedef union {
 
 
 //////////////////////////////////////////////////////////////////////////
-// (5) descriptor
+// (3) descriptor
 extern const cobj_class_descriptor * const genclass_descriptor;
 
 //////////////////////////////////////////////////////////////////////////
-// (6) init-function
+// (4) init-function
 #ifdef COBJ_CLASS_PARAMETERS
 
 	void genclass_initialize(
@@ -110,7 +101,7 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 #ifdef COBJ_IMPLEMENTATION_FILE
 
 	//////////////////////////////////////////////////////////////////////////
-	// fw-declare the initializer_impl
+	// (1) fw-declare the initializer_impl
 	static void initialize_impl(
 		genclass_object_impl * self,
 		#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
@@ -121,7 +112,7 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 	);
 	
 	//////////////////////////////////////////////////////////////////////////
-	// implement the public initializer
+	// (2) implement the public initializer
 	void genclass_initialize(
 		genclass_object * self,
 		#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
@@ -145,7 +136,7 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 	
 	
 	//////////////////////////////////////////////////////////////////////////
-	// declare and implement queryinterface
+	// (3) declare and implement queryinterface
 	static cobj_mt queryinterface(const cobj_interface_descriptor * interface);
 	static cobj_mt queryinterface(const cobj_interface_descriptor * interface){
 				
@@ -160,7 +151,7 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////
-	// generate the class-descriptor
+	// (4) generate the class-descriptor
 	static const cobj_class_descriptor genclass_descriptor_instance = {
 		.class_name = COBJPVT_PP_STRINGIFY(COBJ_CLASS_NAME),
 		.object_size = sizeof(genclass_object),
