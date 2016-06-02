@@ -84,13 +84,12 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 // (4) init-function
 #ifdef COBJ_CLASS_PARAMETERS
 
-	void genclass_initialize(
-		genclass_object * self,
+	bool genclass_initialize(
+		genclass_object * self
 		#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
-			GEN_PARAM_TYPE GEN_PARAM_NAME,
+			,GEN_PARAM_TYPE GEN_PARAM_NAME
 		COBJPVT_GEN_CLASS_PARAMETER_GENERATOR()
 		#undef COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE
-		int * initialize_result
 	);
 
 #endif
@@ -102,35 +101,32 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 
 	//////////////////////////////////////////////////////////////////////////
 	// (1) fw-declare the initializer_impl
-	static void initialize_impl(
-		genclass_object_impl * self,
+	static bool initialize_impl(
+		genclass_object_impl * self
 		#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
-			GEN_PARAM_TYPE GEN_PARAM_NAME,
+			,GEN_PARAM_TYPE GEN_PARAM_NAME
 		COBJPVT_GEN_CLASS_PARAMETER_GENERATOR()
 		#undef COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE
-		int * initialize_result
 	);
 	
 	//////////////////////////////////////////////////////////////////////////
 	// (2) implement the public initializer
-	void genclass_initialize(
-		genclass_object * self,
+	bool genclass_initialize(
+		genclass_object * self
 		#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
-			GEN_PARAM_TYPE GEN_PARAM_NAME,
+			,GEN_PARAM_TYPE GEN_PARAM_NAME
 		COBJPVT_GEN_CLASS_PARAMETER_GENERATOR()
 		#undef COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE
-		int * initialize_result
 	) {
 		
 		self->private_data.class_desriptor = genclass_descriptor;
 		
-		initialize_impl(
-		(genclass_object_impl*)self,
+		return initialize_impl(
+		(genclass_object_impl*)self
 		#define COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE(GEN_PARAM_TYPE, GEN_PARAM_NAME)	\
-			GEN_PARAM_NAME,
+			,GEN_PARAM_NAME
 		COBJPVT_GEN_CLASS_PARAMETER_GENERATOR()
 		#undef COBJPVT_GEN_CLASS_PARAMETER_TEMPLATE
-		initialize_result
 	);
 	}
 	
