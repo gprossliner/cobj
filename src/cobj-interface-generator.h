@@ -54,11 +54,27 @@ typedef struct {
 				Common Error:
 				expected ';', ',' or ')' before 'COBJPVT_GEN_METHOD_ARGS_SEPERATOR_1' or any odd number:
 
-				The syntax of the COBY_INTERFACE_METHOD is invalid, because the parameter list must always contain pairs values.
+				Cause:
+				The syntax of the COBJ_INTERFACE_METHOD is invalid, because the parameter list must always contain pairs values.
 				You may be missing the comma between the type and the name.
 
+				Resolution:
+				Insert a comma between the type and the name, like:
 				Wrong: COBJ_INTERFACE_METHOD(void, foo, int i)
 				Right: COBJ_INTERFACE_METHOD(void, foo, int, i)
+			*/
+
+			/*
+				Common Error:
+				expected ';', ',' or ')' before 'COBJPVT_GEN_METHOD_ARGS_SEPERATOR_36':
+
+				Cause:
+				You have defined a COBJ_INTERFACE_METHOD with more than 16 arguments. This is currently not supported,
+				if you need it, please file an issue!
+
+				Resolution:
+				Refactor the method to use not more than 16 arguments, for example put some arguments into a struct.
+
 			*/
 
 	#undef COBJPVT_GEN_METHOD_TEMPLATE	
