@@ -65,7 +65,7 @@ typedef union {
 		const cobj_class_descriptor * class_desriptor;
 		struct {
 			#define COBJPVT_GEN_CLASS_VARIABLE_TEMPLATE(GEN_VARIABLE_TYPE, GEN_VARIABLE_NAME)	\
-				GEN_VARIABLE_TYPE COBJ_PP_CONCAT(private_, __COUNTER__);
+				struct { GEN_VARIABLE_TYPE _; };
 			COBJPVT_GEN_CLASS_VARIABLE_GENERATOR()
 			#undef COBJPVT_GEN_CLASS_VARIABLE_TEMPLATE	
 		} class_data;
