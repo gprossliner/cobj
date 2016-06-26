@@ -27,11 +27,24 @@ SOFTWARE.
 #ifndef COBJPVT_GEN_BASE_H_
 #define COBJPVT_GEN_BASE_H_
 
-#include "private/cobjpvt-generator-framework.h"
+#include "cobjpvt-generator-framework.h"
 
 //////////////////////////////////////////////////////////////////////////
 //	Method-Generation
 //	This macros defines how interface methods are named in public code
+
+/*! \brief Defines a method of an interface
+ *		\param GEN_RETURN_TYPE the return type of the method
+ *		\param GEN_METHOD_NAME the name of the method
+ *		\param ... 0-15 arguments of the function in the format: argType1, argName1, ... argType15, argName15
+ *
+ *  This macro has to be used in combination with the COBJ_INTERFACE_METHODS
+ *  macro in a .h file of an interface.
+ *  
+ *  #define COBJ_INTERFACE_METHODS	\
+ *		COBJ_INTERFACE_METHOD(int, add_numbers, int, a, int b)	\
+ *		COBJ_INTERFACE_METHOD(int, subtract_numbers, int, a, int b)	
+ */
 #define COBJ_INTERFACE_METHOD(GEN_RETURN_TYPE, GEN_METHOD_NAME, ...)	\
 	COBJPVT_GEN_INTERFACE_METHOD(GEN_RETURN_TYPE, GEN_METHOD_NAME, __VA_ARGS__)
 

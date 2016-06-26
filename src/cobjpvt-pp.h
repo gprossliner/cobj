@@ -28,6 +28,11 @@ SOFTWARE.
 #define COBJ_PP_H
 
 //////////////////////////////////////////////////////////////////////////
+// COBJPVT_ASSERT: provides assertions to guide the user about things going wrong
+#define COBJPVT_ASSERT(P_CONDTION, P_MESSAGE) typedef char COBJPVT_ASSERT_##MSG[(P_CONDTION)?1:-1]
+#define COBJPVT_ERROR(P_MESSAGE) COBJPVT_ASSERT(0, P_MESSAGE)
+
+//////////////////////////////////////////////////////////////////////////
 // COBJPVT_PP_STRINGIFY: #s with previous arg expansion
 #define COBJPVT_PP_STRINGIFYHLP(s)				#s
 #define COBJPVT_PP_STRINGIFY(s)					COBJPVT_PP_STRINGIFYHLP(s)

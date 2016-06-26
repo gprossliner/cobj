@@ -28,12 +28,10 @@ SOFTWARE.
 // Possible Preprocessor Symbols
 //
 //	COBJ_CLASS_NAME: The name of the class
-//	COBJ_CLASS_PARAMETERS --> COBJ_CLASS_PARAMETER(GEN_PARAM_SPEC): X-Macro for the provided Parameters
 //	COBJ_CLASS_INTERFACES --> COBJ_CLASS_INTERFACE(GEN_INTERFACE_NAME): X-Macro for the implemented Interfaces
 //	COBJ_CLASS_VARIABLES --> COBJ_CLASS_VARIABLE(GEN_VARIABLE_SPEC): X-Macro for object private variables
 //
 // Names defined:
-//	genclass_parameters_struct: Defines the name of the struct holding all parameters for the construction of an instance
 //	genclass_descriptor: Defines the name of the class-descriptor
 //////////////////////////////////////////////////////////////////////////
 
@@ -59,7 +57,6 @@ SOFTWARE.
 //	genclass_object: 
 #	define genclass_object genclass
 #	define genclass_object_impl COBJ_PP_CONCAT(genclass, _impl)
-#	define genclass_parameters COBJ_PP_CONCAT(genclass, _parameters)
 #	define genclass_initialize COBJ_PP_CONCAT(genclass, _initialize)
 
 #endif

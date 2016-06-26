@@ -27,8 +27,8 @@ SOFTWARE.
 
 //////////////////////////////////////////////////////////////////////////
 // Define common names
-#include "private/cobjpvt-generator-class-defines.h"
-#include "private/cobjpvt-generator-helper.h"
+#include "cobjpvt-generator-class-defines.h"
+#include "cobjpvt-generator-helper.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Validate specific Symbols
@@ -150,7 +150,7 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 	// (4) generate the class-descriptor
 	static const cobj_class_descriptor genclass_descriptor_instance = {
 		.class_name = COBJPVT_PP_STRINGIFY(COBJ_CLASS_NAME),
-		.queryinterface = &queryinterface
+		.queryinterface = &queryinterface		
 	};
 	
 	const cobj_class_descriptor * const genclass_descriptor = &genclass_descriptor_instance;	
@@ -158,3 +158,10 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 
 
 #endif
+
+
+// #undef properties passed
+#undef COBJ_CLASS_NAME
+#undef COBJ_CLASS_PARAMETERS
+#undef COBJ_CLASS_VARIABLES
+#undef COBJ_CLASS_INTERFACES

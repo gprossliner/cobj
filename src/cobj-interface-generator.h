@@ -25,8 +25,8 @@ SOFTWARE.
 */
 
 #include "cobj.h"
-#include "private/cobjpvt-pp.h"
-#include "private/cobjpvt-generator-helper.h"
+#include "cobjpvt-pp.h"
+#include "cobjpvt-generator-helper.h"
 
 //////////////////////////////////////////////////////////////////////////
 // #define the names used generators for interface "geninterface"
@@ -108,7 +108,7 @@ bool geninterface_queryinterface(cobj_object * object, geninterface_reference * 
 #ifdef COBJ_IMPLEMENTATION_FILE
 
 	// we need the #defines for the names here
-	#include "private/cobjpvt-generator-class-defines.h"
+	#include "cobjpvt-generator-class-defines.h"
 
 	//////////////////////////////////////////////////////////////////////////
 	// (1) strong typed object_struct
