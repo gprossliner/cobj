@@ -15,7 +15,7 @@ There is no external code-generator, build step or any other tool needed beside
 the C compiler. The cobj generator is heavily based on the x-macro technique, to
 generate the code needed.
 
-## cobj wants to be easy, safe and natural to use
+## cobj is easy, safe and natural to use
 Easy: Once you get the macros done (there will be templates provided), everything beside the
 implementation is created by the cobj generator (some .h files).
 
@@ -30,8 +30,8 @@ cobj basically defines this kind of entities:
 
 ## Descriptors
 Descriptors are a way for cobj to identity a class or interface. Normally you don't need
-to use them directly in your code, but they play an important role how coby works.
-If you are interested, please check out the [CobyPattern](CobyPattern.md) document.
+to use them directly in your code, but they play an important role how cobj works.
+If you are interested, please check out the [CobjPattern](CobjPattern.md) document.
 Each descriptor is generated as global variable. Because they are const, they are
 normally compiled into program memory. So they use no ram.
 
