@@ -101,11 +101,35 @@ bool geninterface_queryinterface(cobj_object * object, geninterface_reference * 
 #undef COBJPVT_GEN_METHOD_TEMPLATE
 
 //////////////////////////////////////////////////////////////////////////
-// Create the implementation. Generator needs to be in COBJ_INTERFACE_IMPLEMENTATION_MODE,
-//	which needs to be defined when #including geninterface.h into a implemenation.c file
-//	to distinct when implementation.h file is included into a client, .c files need to #define COBJ_IMPLEMENTATION_FILE
-#ifdef COBJ_INTERFACE_IMPLEMENTATION_MODE
-#ifdef COBJ_IMPLEMENTATION_FILE
+// Create the implementation
+
+//////////////////////////////////////////////////////////////////////////
+//	Context selective selection macros, see issues #8 & #13
+//	These replace COBJ_INTERFACE_IMPLEMENTATION_MODE, and updates COBJ_IMPLEMENTATION_FILE with an arg
+
+#ifndef COBJ_CLASS_INTERFACES
+#	define COBJPVT_CLASS_INTERFACES_EMPTY_DEFINE
+#	define COBJ_CLASS_INTERFACES	// this is to avoid that if COBJ_CLASS_INTERFACES not not defined, the preprocessor in #if expands to #if 0 0
+#endif
+
+#define COBJPVT_GEN_CLASS_INTERFACE_TEMPLATE(GEN_INTERFACE_NAME) \
+	|| COBJ_PP_CONCAT(GEN_INTERFACE_NAME, _COBJ_ID) == COBJ_PP_CONCAT(COBJ_INTERFACE_NAME, _COBJ_ID)
+
+#define COBJ_INTERFACE_IMPLEMENTATION_MODE()	\
+	0 COBJPVT_GEN_CLASS_INTERFACE_GENERATOR()
+
+#if COBJ_INTERFACE_IMPLEMENTATION_MODE()
+// cleanup COBJ_INTERFACE_IMPLEMENTATION_MODE()
+#undef  COBJPVT_GEN_CLASS_INTERFACE_TEMPLATE
+#ifdef COBJPVT_CLASS_INTERFACES_EMPTY_DEFINE
+#	undef COBJ_CLASS_INTERFACES
+#	undef COBJPVT_CLASS_INTERFACES_EMPTY_DEFINE
+#endif
+#undef COBJPVT_GEN_CLASS_INTERFACE_TEMPLATE
+
+#define COBJ_CLASS_IMPLEMENTATION_MODE()	\
+	COBJ_PP_CONCAT(COBJ_IMPLEMENTATION_FILE, _COBJ_ID) == COBJ_PP_CONCAT(COBJ_CLASS_NAME, _COBJ_ID)
+#if COBJ_CLASS_IMPLEMENTATION_MODE()
 
 	// we need the #defines for the names here
 	#include "cobjpvt-generator-class-defines.h"
@@ -186,6 +210,14 @@ bool geninterface_queryinterface(cobj_object * object, geninterface_reference * 
 	};
 	
 #endif
+#else
+// cleanup COBJ_INTERFACE_IMPLEMENTATION_MODE()
+#undef  COBJPVT_GEN_CLASS_INTERFACE_TEMPLATE
+#ifdef COBJPVT_CLASS_INTERFACES_EMPTY_DEFINE
+#	undef COBJ_CLASS_INTERFACES
+#	undef COBJPVT_CLASS_INTERFACES_EMPTY_DEFINE
+#endif
+#undef COBJPVT_GEN_CLASS_INTERFACE_TEMPLATE
 #endif
 
 //////////////////////////////////////////////////////////////////////////

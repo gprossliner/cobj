@@ -44,11 +44,17 @@ SOFTWARE.
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-// (1) strong typed implemenation object_struct
-#ifndef COBJ_IMPLEMENTATION_FILE
+// (1) strong typed implementation object_struct
+#define COBJ_CLASS_IMPLEMENTATION_MODE()	\
+	COBJ_PP_CONCAT(COBJ_IMPLEMENTATION_FILE, _COBJ_ID) == COBJ_PP_CONCAT(COBJ_CLASS_NAME, _COBJ_ID)
+#if COBJ_CLASS_IMPLEMENTATION_MODE()
 	// if we are in an implementation-file, this struct has already been rendered
 	// on the first interface-implementation, because the thunks need the type
 	// to be defined already.
+
+	#ifndef COBJPVT_GEN_OBJECT_STRUCT_GENERATED
+		#define COBJPVT_GEN_OBJECT_STRUCT_GENERATED
+	
 	typedef struct {
 		cobj_class_descriptor * class_desriptor;
 		#define COBJPVT_GEN_CLASS_VARIABLE_TEMPLATE(GEN_VARIABLE_TYPE, GEN_VARIABLE_NAME)	\
@@ -56,6 +62,8 @@ SOFTWARE.
 		COBJPVT_GEN_CLASS_VARIABLE_GENERATOR()
 		#undef COBJPVT_GEN_CLASS_VARIABLE_TEMPLATE	
 	} genclass_object_impl;
+
+	#endif
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,7 +105,9 @@ extern const cobj_class_descriptor * const genclass_descriptor;
 //////////////////////////////////////////////////////////////////////////
 // This code is generated, when we are in the genclass.c file.
 //	This will implement the functions and variables
-#ifdef COBJ_IMPLEMENTATION_FILE
+#define COBJ_CLASS_IMPLEMENTATION_MODE()	\
+	COBJ_PP_CONCAT(COBJ_IMPLEMENTATION_FILE, _COBJ_ID) == COBJ_PP_CONCAT(COBJ_CLASS_NAME, _COBJ_ID)
+#if COBJ_CLASS_IMPLEMENTATION_MODE()
 
 	//////////////////////////////////////////////////////////////////////////
 	// (1) fw-declare the initializer_impl
